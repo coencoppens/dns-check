@@ -10,9 +10,9 @@ using Google DNS and Open DNS.
 ## Usage
 After adding at least 1 domain to the domainlist.txt file, run from the command line:
 ```
-sh query_domain.sh
+sh check_dns.sh
 ```
-or output to a file:
+or optionally output the result to a file:
 ```
-sh query_domain.sh > result.txt
+sh check_dns.sh > result.txt
 ```
