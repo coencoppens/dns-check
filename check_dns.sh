@@ -3,7 +3,10 @@
 nameservers="8.8.8.8 208.67.222.222"
 tab=$'\t'
 
-for domain in $(cat domainlist.txt); do
+# Function that does the actual DNS checking of a domain
+function checkDNS {
+
+    domain="$1"
 
     echo "========================="
     echo $domain
@@ -86,4 +89,14 @@ for domain in $(cat domainlist.txt); do
     echo ""
     echo ""
 
-done
+}
+
+if [[ -n "$1" ]]; then
+    checkDNS "$1"
+else
+
+    for domain in $(cat domainlist.txt); do
+        checkDNS "$domain"
+    done
+
+fi
