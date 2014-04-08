@@ -3,6 +3,7 @@
 nameservers="8.8.8.8 208.67.222.222"
 tab=$'\t'
 
+
 # Function that does the actual DNS checking of a domain
 function checkDNS {
 
@@ -21,67 +22,73 @@ function checkDNS {
         echo "  @ $sNameServerName:"
 
 
-        # Name Server
-        sNameServerList=""
+        # Name Servers
+            sNameServerList=""
 
-        sNS=`host -t ns $domain $nameserver | grep 'name server' | awk '{print $4}'`
-        for record in $sNS; do
-                sNameServerList="$sNameServerList $record,"
-        done
+            sNS=`host -t ns $domain $nameserver | grep 'name server' | awk '{print $4}'`
+            for record in $sNS; do
+                    sNameServerList="$sNameServerList $record,"
+            done
 
-        # Remove the last , to prettify it
-        sNameServerList=`echo $sNameServerList | sed 's/.\{1\}$//'`
+            # Remove the last , to prettify it
+            sNameServerList=`echo $sNameServerList | sed 's/.\{1\}$//'`
 
-        echo "    NS:$tab$tab$sNameServerList"
-
-
-        # A-Record
-        sARecordList=""
-
-        sARecord=`host -t a $domain $nameserver | grep 'has' | awk '{print $4}'`
-        for record in $sARecord; do
-                sARecordList="$sARecordList $record,"
-        done
-
-        # Remove the last , to prettify it
-        sARecordList=`echo $sARecordList | sed 's/.\{1\}$//'`
-
-        echo "    A:$tab$tab$sARecordList"
+            echo "    NS:$tab$tab$sNameServerList"
+        # End Name Servers
 
 
-        # MX-record
-        sMXRecordList=""
+        # A-records
+            sARecordList=""
 
-        sMXRecord=`host -t mx $domain $nameserver | grep 'handled' | awk '{print $7}'`
-
-        for record in $sMXRecord; do
-
-            sMXRecordList="$sMXRecordList $record"
-
-            if [[ $sMXRecord == *mail* ]]
-            then
-                sMXRecordList="$sMXRecordList ("
-
-                sMXIP=`host -t a $sMXRecord $nameserver | grep 'has' | awk '{print $4}'`
-
-                for IP in $sMXIP; do
-                    sMXRecordList="$sMXRecordList$IP, "
-                done
+            sARecord=`host -t a $domain $nameserver | grep 'has' | awk '{print $4}'`
+            for record in $sARecord; do
+                    sARecordList="$sARecordList $record,"
+            done
 
                 # Remove the last , to prettify it
-                sMXRecordList=`echo $sMXRecordList | sed 's/.\{2\}$//'`
+            sARecordList=`echo $sARecordList | sed 's/.\{1\}$//'`
 
-                sMXRecordList="$sMXRecordList)"
-            fi
+            echo "    A:$tab$tab$sARecordList"
+        # End A-records
 
-            sMXRecordList="$sMXRecordList, "
 
-        done
+        # MX-records
+            sMXRecordList=""
 
-        # Remove the last , to prettify it
-        sMXRecordList=`echo $sMXRecordList | sed 's/.\{1\}$//'`
+            sMXRecord=`host -t mx $domain $nameserver | grep 'handled' | awk '{print $7}'`
 
-        echo "    MX:$tab$tab$sMXRecordList"
+            for record in $sMXRecord; do
+
+                sMXRecordList="$sMXRecordList $record"
+
+                if [[ $record == *mail* ]]
+                then
+
+                    sMXRecordList="$sMXRecordList ("
+
+                    sMXIP=`host -t a $record $nameserver | grep 'has address' | awk '{print $4}'`
+
+                    for IP in $sMXIP; do
+                        sMXRecordList="$sMXRecordList$IP, "
+                    done
+
+                    # Remove the last , to prettify it
+                    sMXRecordList=`echo $sMXRecordList | sed 's/.\{2\}$//'`
+
+                    sMXRecordList="$sMXRecordList)"
+
+                fi
+
+                sMXRecordList="$sMXRecordList, "
+
+            done
+
+                # Remove the last , to prettify it
+            sMXRecordList=`echo $sMXRecordList | sed 's/.\{1\}$//'`
+
+            echo "    MX:$tab$tab$sMXRecordList"
+        # End MX-records
+
         echo ""
 
     done
@@ -90,6 +97,7 @@ function checkDNS {
     echo ""
 
 }
+
 
 if [[ -n "$1" ]]; then
     checkDNS "$1"
