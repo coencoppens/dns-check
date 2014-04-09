@@ -73,7 +73,7 @@ function checkDNS {
                     done
 
                     # Remove the last , to prettify it
-                    sMXRecordList=`echo $sMXRecordList | sed 's/.\{2\}$//'`
+                    sMXRecordList=`echo $sMXRecordList | sed 's/.\{1\}$//'`
 
                     sMXRecordList="$sMXRecordList)"
 
